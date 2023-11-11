@@ -31,7 +31,7 @@ const ProductList = () => {
       {/* Add an input for the user to enter the search term */}
       <input
         type="text"
-        placeholder="Enter search term"
+        placeholder="Search for products"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
