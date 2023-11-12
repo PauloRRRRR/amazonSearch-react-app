@@ -20,20 +20,24 @@ async function scrapeAmazon(url) {
     try {
         const productsData = [];  // Define productsData locally
 
-        const { data: html } = await axios.get(url);
+        const { data: html } = await axios.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+            },
+        });
+        
         const $ = cheerio.load(html);
 
         // Assuming each product is contained within a div with class '.s-result-item'
         $('.sg-col-inner').each((i, product) => {
             const rawTitle = $(product).find('.a-size-base-plus.a-color-base.a-text-normal').text();
-            const title = truncateTitle(rawTitle, 20);
-            const rawRating = $(product).find('.a-price-whole').text(); // Adjust this based on the actual structure
-            const rating = truncateTitle(rawRating, 7);
+            const title = truncateTitle(rawTitle, 40);
+            var rating = $(product).find('span[aria-label="1.205"] a span.a-size-base.s-underline-text').text().trim(); // Adjust this based on the actual structure
             const imageUrl = $(product).find('.s-image').attr('src');
-            // Add other data extraction logic here based on the structure of the page
+            const stars = $(product).find('i.a-icon.a-icon-star-small.a-star-small-5.aok-align-bottom span.a-icon-alt').text();
 
             // Store product data in the local array
-            productsData.push({ title, rating, imageUrl });
+            productsData.push({ title, rating, imageUrl, stars });
         });
 
         return productsData;
